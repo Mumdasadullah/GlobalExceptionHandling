@@ -4,6 +4,7 @@ using InMemoryDBSpecificationRepositoryUOWProject.Context;
 using InMemoryDBSpecificationRepositoryUOWProject.Models;
 using InMemoryDBSpecificationRepositoryUOWProject.Respositories;
 using InMemoryDBSpecificationRepositoryUOWProject.Services;
+using InMemoryDBSpecificationRepositoryUOWProject.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +20,9 @@ builder.Services.AddDbContext<InMemoryDBContext>(options =>
 {
     options.UseInMemoryDatabase("EmployeeDB");
 });
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IEmployeeReadRepository, EmployeeReadRepository>();
+builder.Services.AddScoped<IEmployeeWriteRepository, EmployeeWriteRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 var app = builder.Build();

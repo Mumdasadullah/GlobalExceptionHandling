@@ -2,32 +2,35 @@
 using InMemoryDBSpecificationRepositoryUOWProject.DTOs.EmployeeDTOs;
 using InMemoryDBSpecificationRepositoryUOWProject.Models;
 using InMemoryDBSpecificationRepositoryUOWProject.Specifications;
+using Microsoft.EntityFrameworkCore;
 
 namespace InMemoryDBSpecificationRepositoryUOWProject.Respositories
 {
-    public interface IEmployeeRepository
+    public interface IEmployeeReadRepository : IGenericReadRepository<Employee>
     {
-        List<EmployeeDTO> GetEmployees();
-        EmployeeDTO GetById(int id);
     }
-    public class EmployeeRepository : IEmployeeRepository
+    public interface IEmployeeWriteRepository : IGenericWriteRepository<Employee>
     {
-        private readonly InMemoryDBContext _context;
+    }
 
-        public EmployeeRepository(InMemoryDBContext context)
+    public class EmployeeReadRepository : GenericReadRepository<Employee>, IEmployeeReadRepository
+    {
+        public EmployeeReadRepository(InMemoryDBContext context) : base(context)
         {
-            _context = context;
         }
-
-        public List<EmployeeDTO> GetEmployees()
+        public InMemoryDBContext InMemoryDBContext
         {
-            var spec = new EmployeeSpecifications("Active");
-            return _context.ApplySpecification(spec).Select(x => x.ToEmployeeDTO()).ToList();
+            get { return _context as InMemoryDBContext; }
         }
-        public EmployeeDTO GetById(int id)
+    }
+    public class EmployeeWriteRepository : GenericWriteRepository<Employee>,  IEmployeeWriteRepository
+    {
+        public EmployeeWriteRepository(InMemoryDBContext context) : base(context)
         {
-            var spec = new GetEmployeeByIdInfo(id);
-            return _context.ApplySpecification(spec).Select(x => x.ToEmployeeDTO()).FirstOrDefault() ?? new();
+        }
+        public InMemoryDBContext InMemoryDBContext
+        {
+            get { return _context as InMemoryDBContext; }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using InMemoryDBSpecificationRepositoryUOWProject.Models;
+﻿using InMemoryDBSpecificationRepositoryUOWProject.DTOs.EmployeeDTOs;
+using InMemoryDBSpecificationRepositoryUOWProject.Models;
 
 namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
 {
@@ -7,6 +8,10 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
         public EmployeeSpecifications(string status)
         {
             AddFilterQuery(emp => emp.Status!.Name == status);
+            AddIncludeQuery(emp => emp.Status!);
+            AddIncludeQuery(emp => emp.Country!);
+            AddIncludeQuery(emp => emp.Province!);
+            AddIncludeQuery(emp => emp.City!);
             AddOrderByQuery(emp => emp.Id);
         }
     }

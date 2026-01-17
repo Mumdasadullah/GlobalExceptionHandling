@@ -1,5 +1,7 @@
 ﻿using InMemoryDBSpecificationRepositoryUOWProject.DTOs.EmployeeDTOs;
-using InMemoryDBSpecificationRepositoryUOWProject.Respositories;
+using InMemoryDBSpecificationRepositoryUOWProject.Exceptions;
+using InMemoryDBSpecificationRepositoryUOWProject.Specifications;
+using InMemoryDBSpecificationRepositoryUOWProject.UnitOfWork;
 
 namespace InMemoryDBSpecificationRepositoryUOWProject.Services
 {
@@ -10,22 +12,31 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
     }
     public class EmployeeService : IEmployeeService
     {
-        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public EmployeeService(IEmployeeRepository employeeRepository)
+        public EmployeeService(IUnitOfWork unitOfWork)
         {
-            _employeeRepository = employeeRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public List<EmployeeDTO> GetEmployees()
         {
-            var employees = _employeeRepository.GetEmployees();
-            return employees;
+            var spec = new EmployeeSpecifications("Active");
+            var employees = _unitOfWork.EmployeeRead.GetAll(spec);
+            List<EmployeeDTO> response = new();
+            foreach (var emp in employees)
+            {
+                response.Add(emp.ToEmployeeDTO());
+            }
+            return response;
         }
         public EmployeeDTO GetEmployee(int id)
         {
-            var employee = _employeeRepository.GetById(id);
-            return employee;
+            var spec = new GetEmployeeByIdInfo(id);
+            var employee = _unitOfWork.EmployeeRead.GetById(spec);
+            if (employee == null)
+                throw new NotFoundException("No Employee Found");
+            return employee.ToEmployeeDTO();
         }
     }
 }

@@ -7,12 +7,13 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
     public static class SpecificationExtension
     {
         public static IQueryable<TEntity> ApplySpecification<TEntity>(
-            this InMemoryDBContext _context,
+            this IQueryable<TEntity> query,
             ISpecification<TEntity> specification) where TEntity : BaseEntity
         {
             var efCoreSpecification = new EfCoreSpecification<TEntity>(specification);
 
-            var query = _context.Set<TEntity>().AsNoTracking();
+            query = query.AsNoTracking();
+            //var query = _context.Set<TEntity>().AsNoTracking();
             query = efCoreSpecification.Apply(query);
 
             return query;
