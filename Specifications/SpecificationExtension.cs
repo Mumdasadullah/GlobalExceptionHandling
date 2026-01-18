@@ -12,7 +12,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
         {
             var efCoreSpecification = new EfCoreSpecification<TEntity>(specification);
 
-            query = query.AsNoTracking();
+            //query = query.AsNoTracking();
             //var query = _context.Set<TEntity>().AsNoTracking();
             query = efCoreSpecification.Apply(query);
 

@@ -28,5 +28,26 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Controllers
             var response = _service.GetEmployee(Id);
             return Ok(new ApiResponse { Message = "Employee Fetched Successfully", Data = response });
         }
+
+        [HttpPost("add")]
+        public IActionResult AddEmployeeAndCountry()
+        {
+            var response = _service.EmployeeAndCountryAdd();
+            return Ok(new ApiResponse { Message = "Employee and Country Added Successfully", Data = response });
+        }
+
+        [HttpPut("edit")]
+        public IActionResult UpdateEmployee()
+        {
+            var response = _service.EmployeeUpdate();
+            return Ok(new ApiResponse { Message = "Employee Updated Successfully", Data = response });
+        }
+
+        [HttpDelete("remove")]
+        public IActionResult RemoveEmployee()
+        {
+            var response = _service.EmployeeDelete();
+            return Ok(new ApiResponse { Message = "Employee Deleted Successfully", Data = response });
+        }
     }
 }
