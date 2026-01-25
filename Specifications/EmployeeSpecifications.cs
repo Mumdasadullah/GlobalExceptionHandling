@@ -1,17 +1,14 @@
-﻿using InMemoryDBSpecificationRepositoryUOWProject.DTOs.EmployeeDTOs;
+﻿using InMemoryDBSpecificationRepositoryUOWProject.DTOs;
 using InMemoryDBSpecificationRepositoryUOWProject.Models;
 
 namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
 {
     public class EmployeeSpecifications : Specification<Employee>
     {
-        public EmployeeSpecifications(string status)
+        public EmployeeSpecifications(string companyName)
         {
-            AddFilterQuery(emp => emp.Status!.Name == status);
-            AddIncludeQuery(emp => emp.Status!);
-            AddIncludeQuery(emp => emp.Country!);
-            AddIncludeQuery(emp => emp.Province!);
-            AddIncludeQuery(emp => emp.City!);
+            AddFilterQuery(emp => emp.Company!.Name == companyName);
+            AddIncludeQuery(emp => emp.Company!);
             AddOrderByQuery(emp => emp.Id);
         }
     }
@@ -20,10 +17,8 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
         public GetEmployeeByIdInfo(int Id)
         {
             AddFilterQuery(emp => emp.Id == Id);
-            AddIncludeQuery(emp => emp.Status!);
-            AddIncludeQuery(emp => emp.Country!);
-            AddIncludeQuery(emp => emp.Province!);
-            AddIncludeQuery(emp => emp.City!);
+            AddIncludeQuery(emp => emp.Company!);
+            AddIncludeQuery(emp => emp.CreatedByNavigation!);
         }
     }
 }

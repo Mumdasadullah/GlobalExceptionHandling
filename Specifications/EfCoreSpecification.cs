@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
 {
-    public class EfCoreSpecification<TEntity> : Specification<TEntity> where TEntity : BaseEntity
+    public class EfCoreSpecification<TEntity> : Specification<TEntity> where TEntity : class
     {
         public EfCoreSpecification(ISpecification<TEntity> specification) : base(specification)
         {
@@ -30,7 +30,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
 
                 queryable = orderByQueryable;
             }
-            
+
             if (OrderByDescendingQueries?.Count > 0)
             {
                 var orderByDescQueryable = queryable.OrderByDescending(OrderByDescendingQueries.First());

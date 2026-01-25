@@ -1,16 +1,15 @@
 ﻿using InMemoryDBSpecificationRepositoryUOWProject.Models;
 
-namespace InMemoryDBSpecificationRepositoryUOWProject.DTOs.EmployeeDTOs
+namespace InMemoryDBSpecificationRepositoryUOWProject.DTOs
 {
     public class EmployeeDTO
     {
         public string Name { get; set; } = null!;
         public string UserName { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public string Country { get; set; } = null!;
-        public string Province { get; set; } = null!;
-        public string City { get; set; } = null!;
-        public string Status { get; set; } = null!;
+        public string Company { get; set; } = null!;
+        public string CreatedBy { get; set; } = null!;
+        public string CreatedOn { get; set; } = null!;
     }
 
     public static class EmployeeExtensionMethod
@@ -20,12 +19,10 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.DTOs.EmployeeDTOs
             return new EmployeeDTO
             {
                 Name = $"{employee.FirstName} {employee.LastName}",
-                UserName = employee.UserName,
                 Email = employee.Email,
-                Country = employee.Country?.Name ?? string.Empty,
-                Province = employee.Province?.Name ?? string.Empty,
-                City = employee.City?.Name ?? string.Empty,
-                Status = employee.Status?.Name ?? string.Empty
+                Company = employee.Company?.Name ?? string.Empty,
+                CreatedBy = employee.CreatedByNavigation?.Name ?? string.Empty,
+                CreatedOn = employee.CreatedDate.ToString("MMM dd yyyy hh:mm:ss")
             };
         }
     }

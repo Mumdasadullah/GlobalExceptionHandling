@@ -3,7 +3,7 @@ using InMemoryDBSpecificationRepositoryUOWProject.Models;
 
 namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
 {
-    public interface ISpecification<TEntity> where TEntity : BaseEntity
+    public interface ISpecification<TEntity> where TEntity : class
     {
         Expression<Func<TEntity, bool>>? Criteria { get; }
         IReadOnlyCollection<Expression<Func<TEntity, object>>> IncludesQueries { get; }
@@ -11,7 +11,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
         IReadOnlyCollection<Expression<Func<TEntity, object>>> OrderByDescendingQueries { get; }
     }
 
-    public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : BaseEntity
+    public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : class
     {
         private List<Expression<Func<TEntity, object>>> _includesQueries = new();
         private List<Expression<Func<TEntity, object>>> _orderByQueries = new();

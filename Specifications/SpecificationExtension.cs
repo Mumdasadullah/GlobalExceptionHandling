@@ -8,7 +8,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
     {
         public static IQueryable<TEntity> ApplySpecification<TEntity>(
             this IQueryable<TEntity> query,
-            ISpecification<TEntity> specification) where TEntity : BaseEntity
+            ISpecification<TEntity> specification) where TEntity : class
         {
             var efCoreSpecification = new EfCoreSpecification<TEntity>(specification);
 

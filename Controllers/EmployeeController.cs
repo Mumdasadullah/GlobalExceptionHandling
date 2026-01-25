@@ -8,46 +8,46 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly IEmployeeService _service;
+        //private readonly IEmployeeService _service;
 
-        public EmployeeController(IEmployeeService service)
-        {
-            _service = service;
-        }
+        //public EmployeeController(IEmployeeService service)
+        //{
+        //    _service = service;
+        //}
 
-        [HttpGet("all")]
-        public IActionResult GetEmployees()
-        {
-            var response = _service.GetEmployees();
-            return Ok(new ApiResponse { Message = "Employees Fetched Successfully", Data = response });
-        }
+        //[HttpGet("all")]
+        //public IActionResult GetEmployees()
+        //{
+        //    var response = _service.GetEmployees();
+        //    return Ok(new ApiResponse { Message = "Employees Fetched Successfully", Data = response });
+        //}
 
-        [HttpGet("get-by-id")]
-        public IActionResult GetEmployeeById(int Id)
-        {
-            var response = _service.GetEmployee(Id);
-            return Ok(new ApiResponse { Message = "Employee Fetched Successfully", Data = response });
-        }
+        //[HttpGet("get-by-id")]
+        //public IActionResult GetEmployeeById(int Id)
+        //{
+        //    var response = _service.GetEmployee(Id);
+        //    return Ok(new ApiResponse { Message = "Employee Fetched Successfully", Data = response });
+        //}
 
-        [HttpPost("add")]
-        public IActionResult AddEmployeeAndCountry()
-        {
-            var response = _service.EmployeeAndCountryAdd();
-            return Ok(new ApiResponse { Message = "Employee and Country Added Successfully", Data = response });
-        }
+        //[HttpPost("add")]
+        //public IActionResult AddEmployeeAndCountry()
+        //{
+        //    var response = _service.EmployeeAndCountryAdd();
+        //    return Ok(new ApiResponse { Message = "Employee and Country Added Successfully", Data = response });
+        //}
 
-        [HttpPut("edit")]
-        public IActionResult UpdateEmployee()
-        {
-            var response = _service.EmployeeUpdate();
-            return Ok(new ApiResponse { Message = "Employee Updated Successfully", Data = response });
-        }
+        //[HttpPut("edit")]
+        //public IActionResult UpdateEmployee()
+        //{
+        //    var response = _service.EmployeeUpdate();
+        //    return Ok(new ApiResponse { Message = "Employee Updated Successfully", Data = response });
+        //}
 
-        [HttpDelete("remove")]
-        public IActionResult RemoveEmployee()
-        {
-            var response = _service.EmployeeDelete();
-            return Ok(new ApiResponse { Message = "Employee Deleted Successfully", Data = response });
-        }
+        //[HttpDelete("remove")]
+        //public IActionResult RemoveEmployee()
+        //{
+        //    var response = _service.EmployeeDelete();
+        //    return Ok(new ApiResponse { Message = "Employee Deleted Successfully", Data = response });
+        //}
     }
 }

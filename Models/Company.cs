@@ -5,25 +5,17 @@ using System.Collections.Generic;
 
 namespace InMemoryDBSpecificationRepositoryUOWProject.Models;
 
-public partial class Employee
+public partial class Company
 {
     public int Id { get; set; }
 
-    public Guid EmployeeId { get; set; }
+    public Guid CompanyId { get; set; }
 
-    public string FirstName { get; set; }
+    public string Name { get; set; }
 
-    public string MiddleName { get; set; }
-
-    public string LastName { get; set; }
-
-    public string Email { get; set; }
-
-    public string Cnic { get; set; }
+    public string Description { get; set; }
 
     public bool IsActive { get; set; }
-
-    public Guid CompanyId { get; set; }
 
     public Guid CreatedBy { get; set; }
 
@@ -33,7 +25,9 @@ public partial class Employee
 
     public DateTime? UpdatedDate { get; set; }
 
-    public virtual Company Company { get; set; }
-
     public virtual User CreatedByNavigation { get; set; }
+
+    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Status> Statuses { get; set; } = new List<Status>();
 }
