@@ -1,7 +1,5 @@
 ﻿using InMemoryDBSpecificationRepositoryUOWProject.DTOs;
 using InMemoryDBSpecificationRepositoryUOWProject.Models;
-using InMemoryDBSpecificationRepositoryUOWProject.Specifications;
-using InMemoryDBSpecificationRepositoryUOWProject.Exceptions;
 
 namespace InMemoryDBSpecificationRepositoryUOWProject.Services
 {
@@ -20,14 +18,13 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
 
         public async Task<bool> AddCompany(AddCompanyDTO company)
         {
-            var spec = new GetUserByIdInfo(company.CreatedBy);
-            User user = _context.Users.ApplySpecification(spec).FirstOrDefault() ?? throw new NotFoundException("No User Found");
+            //var spec = new GetUserByIdInfo(company.CreatedBy);
+            //User user = _context.Users.ApplySpecification(spec).FirstOrDefault() ?? throw new NotFoundException("No User Found");
             Company _company = new()
             {
-                CompanyId = Guid.NewGuid(),
                 Name = company.Name,
                 Description = company.Description,
-                CreatedBy = user.UserId
+                CreatedBy = company.CreatedBy
             };
 
             await _context.Companies.AddAsync(_company);

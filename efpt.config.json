@@ -1,6 +1,6 @@
 ﻿{
    "CodeGenerationMode": 4,
-   "ContextClassName": "CompanyDB_LocalContext",
+   "ContextClassName": "AppDBContext",
    "ContextNamespace": null,
    "FilterSchemas": false,
    "IncludeConnectionString": false,
@@ -13,7 +13,7 @@
    "Schemas": null,
    "SelectedHandlebarsLanguage": 2,
    "SelectedToBeGenerated": 0,
-   "T4TemplatePath": null,
+   "T4TemplatePath": "",
    "Tables": [
       {
          "Name": "[dbo].[Companies]",
@@ -62,5 +62,5 @@
    "UseSchemaNamespaces": false,
    "UseSpatial": false,
    "UseT4": false,
-   "UseT4Split": false
+   "UseT4Split": true
 }

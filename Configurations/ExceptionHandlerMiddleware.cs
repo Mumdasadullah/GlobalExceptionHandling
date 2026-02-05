@@ -34,6 +34,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Configurations
                 Exceptions.ForbiddenException => StatusCodes.Status403Forbidden,
                 Exceptions.NotFoundException => StatusCodes.Status404NotFound,
                 Exceptions.KeyNotFoundException => StatusCodes.Status404NotFound,
+                Exceptions.ConflictException => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status500InternalServerError
             };
             var result = JsonSerializer.Serialize(new ApiResponse { StatusCode = statusCode, Message = ex.Message, Data = null }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });

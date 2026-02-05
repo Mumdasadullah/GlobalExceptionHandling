@@ -11,10 +11,12 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
     public interface IEmployeeService
     {
         Task<List<EmployeeDTO>> GetEmployees();
-        Task<EmployeeDTO> GetEmployee(int id);
+        Task<EmployeeDTO> GetEmployee(Guid id);
         //Task<bool> EmployeeAndCountryAdd();
         //Task<bool> EmployeeUpdate();
         //Task<bool> EmployeeDelete();
+        Task<EmployeeDTO> AddEmployee(AddEmployeeDTO request);
+        Task<EmployeeDTO> DeleteEmployee(Guid Id);
     }
     public class EmployeeService : IEmployeeService
     {
@@ -27,7 +29,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
 
         public async Task<List<EmployeeDTO>> GetEmployees()
         {
-            var spec = new EmployeeSpecifications("Active");
+            //var spec = new EmployeeSpecifications("Active");
             //var employees = _unitOfWork.EmployeeRead.GetAll(spec);
             //List<EmployeeDTO> response = new();
             //foreach (var emp in employees)
@@ -35,10 +37,10 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
             //    response.Add(emp.ToEmployeeDTO());
             //}
             //return response;
-            List<EmployeeDTO> response = await _context.Employees.ApplySpecification(spec).Select(emp => emp.ToEmployeeDTO()).ToListAsync();
+            List<EmployeeDTO> response = await _context.Employees.Select(emp => emp.ToEmployeeDTO()).ToListAsync();
             return response;
         }
-        public async Task<EmployeeDTO> GetEmployee(int id)
+        public async Task<EmployeeDTO> GetEmployee(Guid id)
         {
             var spec = new GetEmployeeByIdInfo(id);
             //var employee = _unitOfWork.EmployeeRead.GetById(spec);
@@ -47,6 +49,34 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
             //return employee.ToEmployeeDTO();
             EmployeeDTO response = await _context.Employees.ApplySpecification(spec).Select(emp => emp.ToEmployeeDTO()).FirstOrDefaultAsync() ?? throw new NotFoundException("No Employee Found");
             return response;
+        }
+
+        public async Task<EmployeeDTO> AddEmployee(AddEmployeeDTO request)
+        {
+            bool isEmployeeExistOrNot = await _context.Employees.AnyAsync(x => x.Email.ToLower() == request.Email.ToLower() || x.Cnic == request.CNIC);
+            if (isEmployeeExistOrNot)
+                throw new ConflictException("CNIC or Email Duplicates; Employee Already Exists");
+            var spec = new GetCompanyByIdInfo(request.CompanyId);
+            Company company = await _context.Companies.ApplySpecification(spec).FirstOrDefaultAsync() ?? throw new NotFoundException("No Company Found");
+            Employee employee = new() { FirstName = request.FirstName, MiddleName = request.MiddleName, LastName = request.LastName, Email = request.Email, Cnic = request.CNIC, CompanyId = request.CompanyId, CreatedBy = Guid.Parse("C7993C8B-0AF6-45F3-87AB-070AFBB2C703") };
+            await _context.Employees.AddAsync(employee);
+            await _context.SaveChangesAsync();
+            return await GetEmployee(employee.EntityId);
+        }
+
+        public async Task<EmployeeDTO> DeleteEmployee(Guid Id)
+        {
+            try
+            {
+                var spec = new GetEmployeeByIdInfo(Id);
+                Employee employee = await _context.Employees.ApplySpecification(spec).FirstOrDefaultAsync() ?? throw new NotFoundException("No Employee Found");
+                _context.Employees.Remove(employee);
+                await _context.SaveChangesAsync();
+                return employee.ToEmployeeDTO();
+            } catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         //public async Task<bool> EmployeeAndCountryAdd()

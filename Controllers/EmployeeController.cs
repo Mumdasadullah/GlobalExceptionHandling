@@ -8,12 +8,33 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        //private readonly IEmployeeService _service;
+        private readonly IEmployeeService _service;
 
-        //public EmployeeController(IEmployeeService service)
-        //{
-        //    _service = service;
-        //}
+        public EmployeeController(IEmployeeService service)
+        {
+            _service = service;
+        }
+
+        [HttpPost("add")]
+        public async Task<IActionResult> AddEmployee(AddEmployeeDTO request)
+        {
+            var response = await _service.AddEmployee(request);
+            return Ok(new ApiResponse { Message = "Employee Added Successfully", Data = response });
+        }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteEmployee(Guid id)
+        {
+            var response = await _service.DeleteEmployee(id);
+            return Ok(new ApiResponse { Message = "Employee Deleted Successfully", Data = response });
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllEmployees()
+        {
+            var response = await _service.GetEmployees();
+            return Ok(new ApiResponse { Message = "Employees Fetched Successfully", Data = response });
+        }
 
         //[HttpGet("all")]
         //public IActionResult GetEmployees()

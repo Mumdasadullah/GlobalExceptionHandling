@@ -14,9 +14,9 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
     }
     public class GetEmployeeByIdInfo : Specification<Employee>
     {
-        public GetEmployeeByIdInfo(int Id)
+        public GetEmployeeByIdInfo(Guid Id)
         {
-            AddFilterQuery(emp => emp.Id == Id);
+            AddFilterQuery(emp => emp.EntityId == Id);
             AddIncludeQuery(emp => emp.Company!);
             AddIncludeQuery(emp => emp.CreatedByNavigation!);
         }

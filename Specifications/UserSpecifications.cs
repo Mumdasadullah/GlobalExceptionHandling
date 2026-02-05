@@ -10,7 +10,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
     {
         public GetUserByIdInfo(Guid Id)
         {
-            AddFilterQuery(user => user.UserId == Id && user.IsActive == true);
+            AddFilterQuery(user => user.EntityId == Id);
         }
     }
 }

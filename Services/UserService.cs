@@ -19,7 +19,6 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
         {
             User _user = new()
             {
-                UserId = Guid.NewGuid(),
                 Name = user.Name,
                 Description = user.Description
             };
