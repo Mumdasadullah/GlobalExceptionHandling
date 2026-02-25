@@ -13,4 +13,12 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Specifications
             AddFilterQuery(user => user.EntityId == Id);
         }
     }
+
+    public class GetUserByEmail : Specification<User>
+    {
+        public GetUserByEmail(string email)
+        {
+            AddFilterQuery(user => user.Email == email);
+        }
+    }
 }

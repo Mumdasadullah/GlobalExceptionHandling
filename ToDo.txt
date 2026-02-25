@@ -1,0 +1,14 @@
+How To Implement a RSA:
+	First Install OpenSSL using below link
+		https://slproweb.com/products/Win32OpenSSL.html
+	then add a bin folder path in environment variables
+	follow below video link
+		https://youtu.be/6zpBKVLox34?si=kjtS_jqmD2nHi7EH
+
+	After downloading successfully folow below article
+		https://medium.com/@esteban210301/securing-your-asp-net-api-with-jwt-and-rsa-a-step-towards-robust-authentication-3645d5a1142c
+
+
+1) Implement Role Based Access Control (RBAC).
+2) Implement a Json Web Token (JWT) based authentication system(using RSA). --DONE
+3) Integrate with third-party authentication providers (e.g., Google, Facebook). 

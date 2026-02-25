@@ -21,9 +21,29 @@ public partial class User
 
     public DateTime? DeletedOn { get; set; }
 
+    public string Email { get; set; }
+
+    public string Password { get; set; }
+
     public virtual ICollection<Company> Companies { get; set; } = new List<Company>();
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
+    public virtual ICollection<Module> ModuleCreatedByNavigations { get; set; } = new List<Module>();
+
+    public virtual ICollection<Module> ModuleUpdatedByNavigations { get; set; } = new List<Module>();
+
+    public virtual ICollection<Permission> PermissionCreatedByNavigations { get; set; } = new List<Permission>();
+
+    public virtual ICollection<Permission> PermissionUpdatedByNavigations { get; set; } = new List<Permission>();
+
+    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
+
+    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+
     public virtual ICollection<Status> Statuses { get; set; } = new List<Status>();
+
+    public virtual ICollection<UserRole> UserRoleCreatedByNavigations { get; set; } = new List<UserRole>();
+
+    public virtual ICollection<UserRole> UserRoleUsers { get; set; } = new List<UserRole>();
 }
