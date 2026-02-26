@@ -11,4 +11,6 @@ How To Implement a RSA:
 
 1) Implement Role Based Access Control (RBAC).
 2) Implement a Json Web Token (JWT) based authentication system(using RSA). --DONE
-3) Integrate with third-party authentication providers (e.g., Google, Facebook). 
+3) Add a Middleware which Decode a Token and get Claims. --DONE
+4) Add a Refresh Token mechanism to allow users to obtain new access tokens without re-authenticating. --DONE
+5) Integrate with third-party authentication providers (e.g., Google, Facebook). 

@@ -54,6 +54,9 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Extensions
             services.AddSingleton(resolver =>
                 resolver.GetRequiredService<IOptions<JWTSettings>>().Value);
 
+            services.AddHttpContextAccessor();
+            services.AddScoped<ClaimService>();
+
             return services;
         }
 
@@ -154,6 +157,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Extensions
             var issuer = jwtSettings.GetSection("Issuer").Value;
             var audience = jwtSettings.GetSection("Audience").Value;
             var rsaKeyPath = jwtSettings.GetSection("RSAKeyPath").Value;
+            var path = Path.Combine(Directory.GetCurrentDirectory(), rsaKeyPath);
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -168,7 +172,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Extensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = issuer,
                     ValidAudience = audience,
-                    IssuerSigningKey = new RsaSecurityKey(JWTHelper.LoadRSAKeys(rsaKeyPath))
+                    IssuerSigningKey = new RsaSecurityKey(JWTHelper.LoadRSAKeys(path))
                 };
             });
 

@@ -42,8 +42,14 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.DTOs
 
     public class LoginUserRequestDTO
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Email { get; set; } = null!;
+        public string Password { get; set; } = null!;
+    }
+
+    public class LoginUserResponseDTO
+    {
+        public string Token { get; set; } = null!;
+        public string RefreshToken { get; set; } = null!;
     }
 
     public static class UserExtensionMethod

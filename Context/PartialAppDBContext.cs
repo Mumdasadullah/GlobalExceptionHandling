@@ -9,7 +9,7 @@ public partial class AppDBContext : DbContext
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
             var idProperty = entity.FindProperty("Id");
-            if (idProperty != null)
+            if (idProperty != null && !idProperty.IsPrimaryKey())
             {
                 idProperty.ValueGenerated = ValueGenerated.OnAdd;
                 idProperty.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);

@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using BCrypt.Net;
 using InMemoryDBSpecificationRepositoryUOWProject.AppSettingsModels;
 using InMemoryDBSpecificationRepositoryUOWProject.DTOs;
 using InMemoryDBSpecificationRepositoryUOWProject.Exceptions;
@@ -18,16 +17,23 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
         Task<bool> AddUser(AddUserDTO user);
         Task<bool> RegisterUser(RegisterUserDTO register);
         Task<bool> AssignRoles(AssignUserRoleDTO userRoles);
-        Task<string> LoginUser(LoginUserRequestDTO request);
+        Task<LoginUserResponseDTO> LoginUser(LoginUserRequestDTO request);
+        Guid CheckTokenAndClaims();
+        Task<string> Refresh(string RefreshToken);
+        Task<bool> Revoke(string RefreshToken);
     }
     public class UserService : IUserService
     {
         private readonly AppDBContext _context;
         private readonly JWTSettings _jwtSettings;
-        public UserService(AppDBContext context, JWTSettings jwtSettings)
+        private readonly IWebHostEnvironment _environment;
+        private readonly ClaimService _claimService;
+        public UserService(AppDBContext context, JWTSettings jwtSettings, IWebHostEnvironment environment, ClaimService claimService)
         {
             _context = context;
             _jwtSettings = jwtSettings;
+            _environment = environment;
+            _claimService = claimService;
         }
 
         public async Task<bool> AddUser(AddUserDTO user)
@@ -61,19 +67,24 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
             return true;
         }
 
-        public async Task<string> LoginUser(LoginUserRequestDTO request)
+        public async Task<LoginUserResponseDTO> LoginUser(LoginUserRequestDTO request)
         {
-            //var spec = new GetUserByEmail(request.Email);
-            //var user = await _context.Users.ApplySpecification(spec).FirstOrDefaultAsync();
-            //if (user is null) throw new NotFoundException("No User Found with this email");
-            //bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
-            //if (!isPasswordValid) throw new UnauthorizedAccessException("Invalid Password");
             User? user = await _context.Users.Where(x => x.Email == request.Email).FirstOrDefaultAsync();
             if (user is null) throw new NotFoundException("Invalid Email or Password");
             bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
             if (!isPasswordCorrect) throw new NotFoundException("Invalid Email or Password");
-            var token = GenerateJwtToken(user);
-            return token;
+            string token = GenerateJwtToken(user);
+            string refreshToken = GenerateRfreshToken();
+            RefreshToken refresh = new()
+            {
+                Token = refreshToken,
+                ExpiryDate = DateTime.UtcNow.AddDays(7),
+                UserId = user.EntityId
+            };
+            await _context.RefreshTokens.AddAsync(refresh);
+            await _context.SaveChangesAsync();
+            LoginUserResponseDTO response = new() { Token = token, RefreshToken = refreshToken };
+            return response;
         }
 
         public async Task<bool> AssignRoles(AssignUserRoleDTO userRoles)
@@ -92,9 +103,34 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
             return true;
         }
 
+        public Guid CheckTokenAndClaims()
+        {
+            if (!Guid.TryParse(_claimService["sid"], out Guid UserId)) throw new NotFoundException("Invalid Token");
+            return UserId;
+        }
+
+        public async Task<string> Refresh(string RefreshToken)
+        {
+            RefreshToken? refreshToken = await _context.RefreshTokens.Where(x => x.Token == RefreshToken).FirstOrDefaultAsync();
+            if (refreshToken is null || refreshToken.ExpiryDate < DateTime.UtcNow || refreshToken.IsRevoked) throw new UnauthorizedException("Unauthorizated User");
+            User? user = await _context.Users.Where(x => x.EntityId == refreshToken.UserId).FirstOrDefaultAsync();
+            if (user is null) throw new NotFoundException("No User Found");
+            return GenerateJwtToken(user);
+        }
+
+        public async Task<bool> Revoke(string RefreshToken)
+        {
+            RefreshToken? refreshToken = await _context.RefreshTokens.Where(x => x.Token == RefreshToken).FirstOrDefaultAsync();
+            if (refreshToken is null || refreshToken.ExpiryDate < DateTime.UtcNow || refreshToken.IsRevoked) throw new UnauthorizedException("Unauthorizated User");
+            refreshToken.IsRevoked = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         private string GenerateJwtToken(User user)
         {
-            var rsa = JWTHelper.LoadRSAKeys(_jwtSettings.RSAKeyPath);
+            string path = Path.Combine(_environment.ContentRootPath, _jwtSettings.RSAKeyPath);
+            var rsa = JWTHelper.LoadRSAKeys(path);
             var signingCredentials = new SigningCredentials
             (
                 new RsaSecurityKey(rsa),
@@ -102,8 +138,7 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
             );
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sid, user.EntityId.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.NameIdentifier, user.Email),
                 new Claim(ClaimTypes.Email, user.Email),
@@ -123,6 +158,14 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescription);
             return tokenHandler.WriteToken(token);
+        }
+
+        private string GenerateRfreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
         }
     }
 }

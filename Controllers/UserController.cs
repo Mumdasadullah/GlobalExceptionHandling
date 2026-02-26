@@ -1,4 +1,5 @@
-﻿using InMemoryDBSpecificationRepositoryUOWProject.DTOs;
+﻿using System.Threading.Tasks;
+using InMemoryDBSpecificationRepositoryUOWProject.DTOs;
 using InMemoryDBSpecificationRepositoryUOWProject.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,14 +36,15 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginUserRequestDTO request)
         {
-            string response = await _service.LoginUser(request);
+            LoginUserResponseDTO response = await _service.LoginUser(request);
             return Ok(new ApiResponse { Message = "Login Successful", Data = response });
         }
 
         [HttpGet("check-token")]
-        public IActionResult CheckToken()
+        public async Task<IActionResult> CheckToken()
         {
-            return Ok(new ApiResponse { Message = "Token is valid", Data = true });
+            Guid response = _service.CheckTokenAndClaims();
+            return Ok(new ApiResponse { Message = "Token is valid", Data = response });
         }
 
         [HttpPost("AssignRoles")]
@@ -50,6 +52,20 @@ namespace InMemoryDBSpecificationRepositoryUOWProject.Controllers
         {
             bool response = await _service.AssignRoles(userRoles);
             return Ok(new ApiResponse { Message = "Roles Assigned Successfully", Data = response });
+        }
+
+        [HttpPost("Refresh")]
+        public async Task<IActionResult> Refresh(string refreshToken)
+        {
+            string response = await _service.Refresh(refreshToken);
+            return Ok(new ApiResponse { Message = "Token Refreshed Successfully", Data = response });
+        }
+
+        [HttpPost("Revoke")]
+        public async Task<IActionResult> Revoke(string refreshToken)
+        {
+            bool response = await _service.Revoke(refreshToken);
+            return Ok(new ApiResponse { Message = "Token Revoked Successfully", Data = response });
         }
     }
 }
